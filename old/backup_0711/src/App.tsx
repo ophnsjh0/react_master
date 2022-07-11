@@ -16,9 +16,9 @@ const Text = styled.span`
 `;
 
 function App() {
-  return <Wrapper>
+  return 
+  <Wrapper>
     <Text> Hello </Text>
-
   </Wrapper>
 }
 
