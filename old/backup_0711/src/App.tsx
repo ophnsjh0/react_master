@@ -1,4 +1,4 @@
-import styled  from 'styled-components';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   display : flex;
@@ -16,7 +16,7 @@ const Text = styled.span`
 `;
 
 function App() {
-  return 
+  return
   <Wrapper>
     <Text> Hello </Text>
   </Wrapper>

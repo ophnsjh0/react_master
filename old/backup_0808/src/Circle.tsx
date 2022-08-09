@@ -1,20 +1,23 @@
 import styled from "styled-components";
 
 interface CircleProps {
-    bgColor: string;
-    fontSize: string;
-  }
+  bgColor: string;
+  fontSize: string;
+  borderColor?: string;
+  text?: string;
+}
 
 interface ContainerProps {
-    Color: string;
+  Color: string;
+  borderColor: string;
 }
 
 interface TextProps {
-    font: string;
+  font: string;
 }
 
 const Text = styled.span<TextProps>`
-    font-size: ${(props)=> props.font};
+    font-size: ${(props) => props.font};
     color : yellow;
 `;
 
@@ -26,13 +29,14 @@ const Container = styled.div<ContainerProps>`
     height: 200px;
     background-color: ${(props) => props.Color};
     border-radius: 100px;
+    border: 3px solid ${(props) => props.borderColor};
 `;
 
 
-function Circle({ bgColor, fontSize }: CircleProps) {
+function Circle({ bgColor, fontSize, text = "text", borderColor }: CircleProps) {
   return (
-    <Container Color={bgColor} >
-        <Text font={fontSize}>Hello</Text>
+    <Container Color={bgColor} borderColor={borderColor ?? "black"}>
+      <Text font={fontSize}>{text}</Text>
     </Container>
   );
 }
