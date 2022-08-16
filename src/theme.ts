@@ -3,7 +3,7 @@ import { DefaultTheme } from "styled-components"
 export const Theme: DefaultTheme = {
     bgColor: "black",
     textColor: "white",
-    accentColor: "#4cd137",
-    fontsize: "30",
+    accentColor: "#B533FF",
+    fontsize: "30px",
 }
 
