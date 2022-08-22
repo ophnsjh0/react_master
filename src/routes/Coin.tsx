@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { Switch, Route, useLocation, useParams } from "react-router";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import Chart from "./Chart";
+import Price from "./Price";
 
 
 const Container = styled.div`
@@ -22,8 +25,45 @@ const Loder = styled.span`
 `;
 
 const Title = styled.h1`
+    display : flex;
+    align-items: center;
     color: ${(props) => props.theme.accentColor};
     font-size: ${(props) => props.theme.fontsize};
+`;
+
+
+const Overview = styled.div`
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+`;
+
+const OverviewItem = styled.div`
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size : 8px;   
+    span:first-child {
+        font-size: 9px;
+        font-weight: 200;
+        color : #FBCFCD;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+`;
+
+const Description = styled.p`
+    margin: 20px 0px;
+    font-size: 11px;
+`;
+
+const Img = styled.img`
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
 `;
 
 interface RouterParam {
@@ -75,6 +115,9 @@ interface InfoData {
     hash_algorithm: string;
     first_data_at: string;
     last_data_at: string;
+    whitepaper: {
+        link: string;
+    }
 }
 
 interface PriceData {
@@ -125,15 +168,61 @@ function Coin() {
                 await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
             setInfo(infoData);
             setPriceInfo(coinData);
+            console.log(infoData)
+            console.log(coinData)
+            setLoading(false);
         })();
-    }, []);
+    }, [coinId]);
     return (
         <Container>
             <Header>
-                <Title>{state?.name || "Loading..."}</Title>
+                <Title>
+                    <Img src={`https://coinicons-api.vercel.app/api/icon/${info?.symbol.toLocaleLowerCase()}`} />
+                    {state?.name ? state.name : loading ? "Loading..." : info?.name}
+                </Title>
             </Header>
-            {loading ? (<Loder>Loading .....</Loder>) : null}
-        </Container>
+            {loading ? (<Loder>Loading .....</Loder>
+            ) : (
+                <>
+                    <Overview>
+                        <OverviewItem>
+                            <span>Rank:</span>
+                            <span>{info?.rank}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Symbol:</span>
+                            <span>${info?.symbol}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Open Source:</span>
+                            <span>{info?.open_source ? "Yes" : "No"}</span>
+                        </OverviewItem>
+                    </Overview>
+                    <Description>
+                        <div>{info?.description}</div>
+                    </Description>
+                    <Overview>
+                        <OverviewItem>
+                            <span>Total Suply:</span>
+                            <span>{priceInfo?.total_supply}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Max Supply:</span>
+                            <span>{priceInfo?.max_supply}</span>
+                        </OverviewItem>
+                    </Overview>
+                    <Switch>
+                        <Route path={`/${coinId}/price`}>
+                            <Price />
+                        </Route>
+                        <Route path={`/${coinId}/chart`}>
+                            <Chart />
+                        </Route>
+                    </Switch>
+                </>
+            )
+            }
+        </Container >
     )
 }
 
