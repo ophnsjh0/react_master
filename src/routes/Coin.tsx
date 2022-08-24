@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Switch, Route, useLocation, useParams } from "react-router";
+import { Switch, Route, useLocation, useParams, useRouteMatch } from "react-router";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Chart from "./Chart";
@@ -40,14 +40,13 @@ const Overview = styled.div`
     border-radius: 10px;
 `;
 
-const OverviewItem = styled.div`
-    
+const OverviewItem = styled.div` 
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size : 8px;   
+    font-size : 10px;   
     span:first-child {
-        font-size: 9px;
+        font-size: 6px;
         font-weight: 200;
         color : #FBCFCD;
         text-transform: uppercase;
@@ -65,6 +64,25 @@ const Img = styled.img`
     height: 35px;
     margin-right: 10px;
 `;
+
+const Tabs = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 25px 0px;
+    gap: 10px;
+`;
+
+const Tab = styled.span < { isActive: boolean } >`
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 7px 0px;
+    border-radius: 10px;
+    color: ${(props) => props.isActive ? props.theme.accentColor : props.theme.textColor};
+`;
+
 
 interface RouterParam {
     coinId: string;
@@ -152,7 +170,7 @@ interface PriceData {
             volume_24h_change_24h: number;
         };
     };
-}
+};
 
 function Coin() {
     const [loading, setLoading] = useState(true);
@@ -160,6 +178,8 @@ function Coin() {
     const [priceInfo, setPriceInfo] = useState<PriceData>();
     const { coinId } = useParams<RouterParam>();
     const { state } = useLocation<RouteState>();
+    const priceMatch = useRouteMatch("/:coinid/price");
+    const chartMatch = useRouteMatch("/:coinid/chart");
     useEffect(() => {
         (async () => {
             const infoData = await (
@@ -168,8 +188,6 @@ function Coin() {
                 await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
             setInfo(infoData);
             setPriceInfo(coinData);
-            console.log(infoData)
-            console.log(coinData)
             setLoading(false);
         })();
     }, [coinId]);
@@ -211,6 +229,14 @@ function Coin() {
                             <span>{priceInfo?.max_supply}</span>
                         </OverviewItem>
                     </Overview>
+                    <Tabs>
+                        <Tab isActive={chartMatch !== null}>
+                            <Link to={`/${coinId}/chart`}>CHART</Link>
+                        </Tab>
+                        <Tab isActive={priceMatch !== null}>
+                            <Link to={`/${coinId}/price`}>PRICE</Link>
+                        </Tab>
+                    </Tabs>
                     <Switch>
                         <Route path={`/${coinId}/price`}>
                             <Price />
