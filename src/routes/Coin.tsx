@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { Switch, Route, useLocation, useParams, useRouteMatch } from "react-router";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -247,7 +247,7 @@ function Coin() {
                             <Price />
                         </Route>
                         <Route path={`/${coinId}/chart`}>
-                            <Chart />
+                            <Chart coinId={coinId} />
                         </Route>
                     </Switch>
                 </>
