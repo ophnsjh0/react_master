@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import ApxChart from "react-apexcharts";
 import ApxChart2 from "react-apexcharts";
 import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 // const ChartTab = styled.div`
 //     display: grid;
@@ -38,11 +40,13 @@ interface ChartProp {
     coinId: string;
 }
 
+
 function Chart({ coinId }: ChartProp) {
     const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId),
         {
             refetchInterval: 10000,
         });
+    const isDark = useRecoilValue(isDarkAtom);
     return <div>
         {/* <ChartTab>
             <Tab isActive={lineMatch !== null}>
@@ -71,7 +75,7 @@ function Chart({ coinId }: ChartProp) {
                 ]}
                 options={{
                     theme: {
-                        mode: "dark",
+                        mode: isDark ? "dark" : "light",
                     },
                     chart: {
                         width: 500,

@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { fetchCoins } from "./api";
 import { Helmet } from "react-helmet";
 import { isPropertySignature } from "typescript";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 
 const Container = styled.div`
@@ -70,9 +72,13 @@ interface CoinInterface {
     type: string,
 }
 
+interface ICoinsProps {
+}
 
-function Coins() {
+function Coins({ }: ICoinsProps) {
     const { isLoading, data } = useQuery<CoinInterface[]>('allCoins', fetchCoins);
+    const setDarkAtom = useSetRecoilState(isDarkAtom);
+    const ToggleDarkAtom = () => setDarkAtom((prev) => !prev);
     // const [coins, setCoins] = useState<CoinInterface[]>([]);
     // const [loading, setLoading] = useState(true);
     // useEffect(() => {
@@ -90,6 +96,7 @@ function Coins() {
             </Helmet>
             <Header>
                 <Title>코인</Title>
+                <button onClick={ToggleDarkAtom}>Toggle Button</button>
             </Header>
             {isLoading ? (<Loder>Loading .....</Loder>)
                 : (
