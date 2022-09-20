@@ -3,6 +3,8 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "./api";
+import { Helmet } from "react-helmet";
+import { isPropertySignature } from "typescript";
 
 
 const Container = styled.div`
@@ -21,11 +23,12 @@ const Header = styled.header`
 const CoinList = styled.ul``;
 
 const Coin = styled.li`
-    background-color: white;
-    color: ${(props) => props.theme.bgColor};
+    background-color: ${(props) => props.theme.cardBgColor};
+    color: ${(props) => props.theme.textColor};
     border-radius: 15px;
     margin-bottom: 10px;
     font-size: 10px;
+    border: 1px solid white;
     a {
         padding: 15px;
         transition: color 0.2s ease-in;
@@ -82,6 +85,9 @@ function Coins() {
     // }, []);
     return (
         <Container>
+            <Helmet>
+                <title>Coins</title>
+            </Helmet>
             <Header>
                 <Title>코인</Title>
             </Header>

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Chart from "./Chart";
 import Price from "./Price";
 import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 import { fetchCoinInfo, fetchCoinTickers } from "./api";
 
 
@@ -26,11 +27,16 @@ const Loder = styled.span`
     display: block;
 `;
 
-const Title = styled.h1`
+const Title = styled.div`
     display : flex;
     align-items: center;
     color: ${(props) => props.theme.accentColor};
     font-size: ${(props) => props.theme.fontsize};
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+    }
 `;
 
 
@@ -70,7 +76,7 @@ const Img = styled.img`
 const Tabs = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    margin: 25px 0px;
+    margin: 20px 0px;
     gap: 10px;
 `;
 
@@ -180,7 +186,8 @@ function Coin() {
     const priceMatch = useRouteMatch("/:coinid/price");
     const chartMatch = useRouteMatch("/:coinid/chart");
     const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId))
-    const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId))
+    const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId],
+        () => fetchCoinTickers(coinId), { refetchInterval: 5000, });
     // const [loading, setLoading] = useState(true);
     // const [info, setInfo] = useState<InfoData>();
     // const [priceInfo, setPriceInfo] = useState<PriceData>();
@@ -198,15 +205,26 @@ function Coin() {
     const loading = infoLoading || tickersLoading
     return (
         <Container>
+            <Helmet>
+                <title>
+                    {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+                </title>
+            </Helmet>
             <Header>
                 <Title>
-                    <Img src={`https://coinicons-api.vercel.app/api/icon/${infoData?.symbol.toLocaleLowerCase()}`} />
-                    {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+                    <Link
+                        to={{
+                            pathname: `/`,
+                        }}>
+                        <Img src={`https://coinicons-api.vercel.app/api/icon/${infoData?.symbol.toLocaleLowerCase()}`} />
+                        {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+                    </Link>
                 </Title>
             </Header>
             {loading ? (<Loder>Loading .....</Loder>
             ) : (
                 <>
+
                     <Overview>
                         <OverviewItem>
                             <span>Rank:</span>
@@ -214,11 +232,11 @@ function Coin() {
                         </OverviewItem>
                         <OverviewItem>
                             <span>Symbol:</span>
-                            <span>${infoData?.symbol}</span>
+                            <span>{infoData?.symbol}</span>
                         </OverviewItem>
                         <OverviewItem>
-                            <span>Open Source:</span>
-                            <span>{infoData?.open_source ? "Yes" : "No"}</span>
+                            <span>Price</span>
+                            <span>${tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
                         </OverviewItem>
                     </Overview>
                     <Description>
