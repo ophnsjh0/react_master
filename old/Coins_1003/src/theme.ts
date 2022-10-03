@@ -8,4 +8,11 @@ export const darkTheme: DefaultTheme = {
     fontsize: "30px",
 }
 
+export const lightTheme: DefaultTheme = {
+    bgColor: "whitesmoke",
+    textColor: "black",
+    accentColor: "#9c88ff",
+    cardBgColor: "white",
+    fontsize: "30px",
+}
 
