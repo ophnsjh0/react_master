@@ -1,11 +1,26 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+
+const toDoState = atom<IToDos[]>({
+    key: "toDo",
+    default: [],
+})
+
+interface IToDos {
+    text: string;
+    category: "TO_DO" | "DOING" | "DONE";
+    id: number;
+}
 
 interface IForm {
     toDo: string;
 }
 
 function ToDoList() {
+    // const value = useRecoilValue(toDoState); ->  recoil 값만 불러올때
+    // const modfn = useSetRecoilState(toDoState); -> recoil 값을 변경할때
+    const [toDos, setToDos] = useRecoilState(toDoState); // -> recoil 값을 불러오고 변경할때 useState와 같은 API
     const {
         register,
         handleSubmit,
@@ -13,17 +28,24 @@ function ToDoList() {
         setValue,
     } = useForm<IForm>()
 
-    const onSubmit = (data: IForm) => {
-        console.log('add to do', data.toDo);
+    const onSubmit = ({ toDo }: IForm) => {
+        setToDos(oldToDos => [{ text: toDo, category: "TO_DO", id: Date.now() }, ...oldToDos])
         setValue('toDo', "");
+        console.log(toDos);
     }
+
     return (
         <div>
+            <h1>To Do List</h1>
+            <hr />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input {...register("toDo", { required: "Please write a To Do" })} placeholder="Write a to do" />
                 <button>Add</button>
                 <span>{errors?.toDo?.message}</span>
             </form>
+            <ul>
+                {toDos.map((toDo) => (<li key={toDo.id}>{toDo.text}</li>))}
+            </ul>
         </div>
     );
 }
@@ -56,6 +78,8 @@ export default ToDoList;
 //         </div>
 //     );
 // }
+
+// export default ToDoList;
 
 // **.. 로그인 폼 예제 ..** //
 
